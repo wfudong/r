@@ -1,0 +1,151 @@
+\documentclass[UTF8,a4paper]{ctexart}
+\usepackage{listings}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{color, soul}
+\usepackage{graphicx}
+\title{数据分析作业(二)}
+\author{王福东}
+\date{\today}
+\begin{document}
+\maketitle
+\begin{enumerate}
+\item Answer 1 \\
+{\color{yellow} \large \textbf{$Assume:$}}\\
+\begin{center}
+\emph{$H_0$}:\emph{M}=10,\,\,V.S.\,\,\,\emph{$H_1$}:\emph{M}$\neq$ 10
+\end{center}
+{\color{blue} \large \textbf{$R\,\,\, Command:$}}\\
+
+\begin{lstlisting}[language=R]
+> w=c(9.8,10.1,9.7,9.9,10,10,9.8,9.7,9.8,9.9)
+> binom.test(sum(w>10),sum(w>10)+sum(w<10),al="two.sided")
+\end{lstlisting}
+{\color{red} \large \textbf{$ Result:$}}\\
+
+\begin{verbatim}
+	Exact binomial test
+
+data:  sum(w > 10) and sum(w > 10) + sum(w < 10)
+number of successes = 1, number of trials = 8, p-value = 0.07031
+alternative hypothesis: true probability of success is not equal to 0.5
+95 percent confidence interval:
+ 0.003159724 0.526509671
+sample estimates:
+probability of success 
+                 0.125 
+
+\end{verbatim}
+
+\textcolor[rgb]{0.28,0.9,0.8} {\large \textbf{$ Conclusion:$}}\\
+$p-value$大于显著性水平（默认$\alpha =0.05$）,可以接受原假设，也就是说不需要对控制做调整
+
+\item Answer\,2
+{\color{yellow} \large \textbf{$Assume:$}}\\
+\begin{center}
+\emph{$H_0$}:\emph{M}=32.32,\,\,V.S.\,\,\,\emph{$H_1$}:\emph{M}$\neq$ 32.32
+\end{center}
+{\color{blue} \large \textbf{$R\,\,\, Command:$}}\\
+\begin{lstlisting}[language=R]
+> w<-c(432,82.46,46.19,43.14,21.59,12.61,23.61,22.2,11.31,
+105.53,83.57,21.77,11.95,42.17,6.30,39.03)
+> binom.test(sum(w>32.32),sum(w>32.32)+sum(w<32.32),
+al="greater")
+\end{lstlisting}
+{\color{red} \large \textbf{$ Result:$}}\\
+\begin{verbatim}
+	Exact binomial test
+
+data:  sum(w > 32.32) and sum(w > 32.32) + sum(w < 32.32)
+number of successes = 8, number of trials = 16, p-value = 0.5982
+alternative hypothesis: true probability of success is less than 0.5
+95 percent confidence interval:
+ 0.0000000 0.7213973
+sample estimates:
+probability of success 
+                   0.5 
+\end{verbatim}
+\textcolor[rgb]{0.28,0.9,0.8} {\large \textbf{$ Conclusion:$}}\\
+$p-value$大于显著性水平（默认$\alpha =0.05$）,可以接受原假设，也即2003年较2002年互联网上网人数没有明显增加
+
+\item Answer\,3
+{\color{yellow} \large \textbf{$Assume:$}}\\
+\begin{center}
+\emph{$H_0$}:无趋势,\,\,V.S.\,\,\,\emph{$H_1$}:有单调递减的趋势
+\end{center}
+{\color{blue} \large \textbf{$R\,\,\, Command:$}}\\
+\begin{lstlisting}[language=R]
+library(tseries)
+w<-c(2.3,2.396,2.1,2.442,1.81,2.007,1.766,1.224,1.411,
+1.438,0.892,1.167)
+D<-numeric()
+if(length(w)%%2==0){
+  c=length(w)/2
+  for(i in 1:c)
+    D[i]=w[i]-w[i+c]}
+if(length(w)%%2==1){
+  c=length(w)/2+0.5
+  for(i in 1:c-1)
+    D[i]=w[i]-w[i+c]}
+binom.test(sum(D>0),sum(D>0)+sum(D<0),al="two.sided")
+\end{lstlisting}
+{\color{red} \large \textbf{$ Result:$}}\\
+\begin{verbatim}
+	Exact binomial test
+
+data:  sum(D > 0) and sum(D > 0) + sum(D < 0)
+number of successes = 6, number of trials = 6, p-value = 0.03125
+alternative hypothesis: true probability of success is not equal to 0.5
+95 percent confidence interval:
+ 0.5407419 1.0000000
+sample estimates:
+probability of success 
+                     1 
+\end{verbatim}
+\textcolor[rgb]{0.28,0.9,0.8} {\large \textbf{$ Conclusion:$}}\\
+$p-value$小于显著性水平，不接受原假设，可以认为数据有单调下降的趋势
+
+\item Answer\,4
+{\color{yellow} \large \textbf{$Assume:$}}\\
+\emph{$H_0$}:是随机的,\,\,V.S.\,\,\,\emph{$H_1$}:不是随机的\\
+
+{\color{blue} \large \textbf{$R\,\,\, Command:$}}\\
+
+\begin{lstlisting}[language=R]
+w<-c(3.6,3.9,4.1,3.6,3.8,3.7,3.4,4.0,3.8,4.1,3.9,
+4.0,3.8,4.2,4.1)
+  x<-numeric()
+  for(i in 1:length(w)){
+    if(w[i]-median(w)>0)
+      x[i]=1
+    if(w[i]-median(w)<=0)
+      x[i]=0
+  }
+  x<-factor(x)
+  runs.test(x)
+\end{lstlisting}
+{\color{red} \large \textbf{$ Result:$}}\\
+
+\begin{verbatim}
+Runs Test
+
+data:  x
+Standard Normal = 1.008, p-value = 0.3134
+alternative hypothesis: two.sided
+\end{verbatim}
+
+\textcolor[rgb]{0.28,0.9,0.8} {\large \textbf{$ Conclusion:$}}\\
+$p-value$
+
+
+
+
+
+
+
+
+
+
+
+\end{enumerate}
+\end{document}
